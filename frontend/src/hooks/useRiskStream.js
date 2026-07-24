@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const MAX_RECONNECT_ATTEMPTS = 10
 const RECONNECT_DELAY_MS = 2000
@@ -20,6 +20,7 @@ export function useRiskStream(url) {
   const [events, setEvents] = useState([])
   const [connection, setConnection] = useState({ status: 'connecting', label: 'CONNECTING', attempts: 0 })
   const reconnectTimer = useRef(null)
+  const socketRef = useRef(null)
 
   useEffect(() => {
     let socket
@@ -30,6 +31,7 @@ export function useRiskStream(url) {
       if (disposed) return
       setConnection({ status: attempts ? 'reconnecting' : 'connecting', label: attempts ? 'RECONNECTING' : 'CONNECTING', attempts })
       socket = new WebSocket(url)
+      socketRef.current = socket
 
       socket.onopen = () => {
         attempts = 0
@@ -50,6 +52,7 @@ export function useRiskStream(url) {
       }
 
       socket.onclose = () => {
+        if (socketRef.current === socket) socketRef.current = null
         if (disposed) return
         attempts += 1
         if (attempts > MAX_RECONNECT_ATTEMPTS) {
@@ -71,7 +74,13 @@ export function useRiskStream(url) {
     }
   }, [url])
 
-  return { latestRisk, events, connection }
+  const sendCameraFrame = useCallback((frame) => {
+    if (socketRef.current?.readyState === WebSocket.OPEN) {
+      socketRef.current.send(frame)
+    }
+  }, [])
+
+  return { latestRisk, events, connection, sendCameraFrame }
 }
 
 function isRiskFrame(message) {

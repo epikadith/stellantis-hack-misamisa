@@ -6,47 +6,46 @@ from fastapi.testclient import TestClient
 
 from backend.app import create_app
 from backend.cv_provider import CVFrameProvider
-from backend.simulation import SimulatedRiskProvider
 from cv.schema import build_result, validate_result
 
 
-def test_cv_provider_merges_partial_cv_result_with_simulation() -> None:
-    module = SimpleNamespace(
-        get_current_frame_result=lambda *, context_mode: {
+def test_cv_provider_processes_browser_frame_and_merges_partial_result() -> None:
+    processed: list[object] = []
+
+    def process(frame: object, *, context_mode: str) -> dict:
+        processed.append(frame)
+        return {
             "risk_score": 83.0,
             "signals": {"perclos": 91.0, "head_pose": None},
             "signal_quality": {"face_detected": True},
             "calibration": {"in_progress": True, "seconds_remaining": 12.0},
-            "context_mode": "city",
+            "context_mode": context_mode,
         }
-    )
+
     provider = CVFrameProvider(
-        module_loader=lambda _: module,
-        simulation=SimulatedRiskProvider(clock=lambda: 0.0),
+        module_loader=lambda _: SimpleNamespace(process_camera_frame=process),
+        frame_decoder=lambda frame_bytes: {"jpeg": frame_bytes},
     )
 
+    before_frame = provider.get_frame_data("night")
+    assert before_frame["signal_quality"]["face_detected"] is False
+    assert provider.submit_frame_bytes(b"jpeg-frame") is True
     result = provider.get_frame_data("night")
 
     validate_result(result)
+    assert processed == [{"jpeg": b"jpeg-frame"}]
     assert result["risk_score"] == 83.0
     assert result["signals"]["perclos"] == 91.0
-    assert result["signals"]["head_pose"] == 45.0
-    assert result["signal_quality"] == {
-        "face_detected": True,
-        "hands_detected": True,
-        "lighting_ok": True,
-    }
-    assert result["calibration"] == {"in_progress": True, "seconds_remaining": 12.0}
+    assert result["signals"]["head_pose"] == 0.0
     assert result["context_mode"] == "night"
 
 
-def test_cv_exception_and_safe_camera_result_use_simulation() -> None:
-    fallback = SimulatedRiskProvider(clock=lambda: 0.0)
-    failing = SimpleNamespace(get_current_frame_result=lambda **_: (_ for _ in ()).throw(RuntimeError("camera")))
-    safe = SimpleNamespace(get_current_frame_result=lambda **_: build_result())
-
-    assert CVFrameProvider(module_loader=lambda _: failing, simulation=fallback).get_frame_data() == fallback.get_frame_data()
-    assert CVFrameProvider(module_loader=lambda _: safe, simulation=fallback).get_frame_data() == fallback.get_frame_data()
+def test_cv_provider_uses_safe_result_for_decode_or_processing_failure() -> None:
+    provider = CVFrameProvider(module_loader=lambda _: SimpleNamespace(process_camera_frame=lambda *_args, **_kwargs: (_ for _ in ()).throw(RuntimeError())))
+    assert provider.submit_frame_bytes(b"bad") is False
+    result = provider.get_frame_data()
+    validate_result(result)
+    assert result["signal_quality"]["face_detected"] is False
 
 
 class FakeCVProvider:
@@ -55,7 +54,9 @@ class FakeCVProvider:
         self.context_modes: list[str] = []
 
     def get_frame_data(self, context_mode: str = "city") -> dict:
-        return SimulatedRiskProvider(clock=lambda: 0.0).get_frame_data(context_mode)
+        result = build_result(context_mode, timestamp=1.0)
+        result["signal_quality"] = {"face_detected": True, "hands_detected": True, "lighting_ok": True}
+        return result
 
     def start_calibration(self) -> bool:
         self.calibration_starts += 1

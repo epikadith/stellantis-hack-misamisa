@@ -8,7 +8,7 @@ from typing import Any, Protocol
 
 from fastapi import WebSocket, WebSocketDisconnect
 
-from .simulation import SimulatedRiskProvider
+from cv.schema import build_result
 
 
 class FrameDataProvider(Protocol):
@@ -31,7 +31,7 @@ class StreamManager:
             raise ValueError("interval_seconds must be positive.")
         self.websocket = websocket
         self._context_mode = context_mode
-        self._provider = provider or SimulatedRiskProvider()
+        self._provider = provider or _SafeResultProvider()
         self._interval_seconds = float(interval_seconds)
         self._event_callback = event_callback
         self._running = False
@@ -53,3 +53,8 @@ class StreamManager:
 
     def stop(self) -> None:
         self._running = False
+
+
+class _SafeResultProvider:
+    def get_frame_data(self, context_mode: str = "city") -> dict[str, Any]:
+        return build_result(context_mode)

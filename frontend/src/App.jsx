@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { CameraFeed } from './components/CameraFeed'
 import { useRiskStream } from './hooks/useRiskStream'
 import './App.css'
 
@@ -11,7 +12,7 @@ const SIGNAL_LABELS = {
 
 function App() {
   const socketUrl = useMemo(() => getSocketUrl(), [])
-  const { latestRisk, connection, events } = useRiskStream(socketUrl)
+  const { latestRisk, connection, events, sendCameraFrame } = useRiskStream(socketUrl)
   const [showNaive, setShowNaive] = useState(false)
 
   return (
@@ -40,9 +41,7 @@ function App() {
             <p>01 / LIVE INPUT</p>
             <h2 id="video-heading">Driver Camera</h2>
           </div>
-          <div className="video-placeholder">
-            <span>CAMERA INITIALIZING</span>
-          </div>
+          <CameraFeed onFrame={sendCameraFrame} />
         </section>
 
         <section className="zone gauge-zone" aria-labelledby="gauge-heading">

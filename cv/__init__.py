@@ -8,7 +8,7 @@ the webcam and signal-fusion pipeline without changing this public contract.
 
 from .calibration import CalibrationEngine, CalibrationState
 from .fusion import FusionWeights, SignalFusionEngine, compute_risk
-from .interface import close_pipeline, get_current_frame_result, set_context_mode, start_calibration
+from .interface import close_pipeline, get_current_frame_result, process_camera_frame, set_context_mode, start_calibration
 from .pipeline import RiskPipeline
 from .schema import CONTEXT_MODES, build_result, validate_result
 from .trajectory import TrajectoryAnalyzer, TrajectoryConfig
@@ -21,6 +21,7 @@ __all__ = [
     "compute_risk",
     "build_result",
     "get_current_frame_result",
+    "process_camera_frame",
     "FusionWeights",
     "RiskPipeline",
     "set_context_mode",

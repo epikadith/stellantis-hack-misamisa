@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import asyncio
+from contextlib import suppress
 from dataclasses import dataclass, field
 from threading import RLock
 from typing import Any, Literal
 
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
 from .cv_provider import CVFrameProvider
@@ -99,6 +100,7 @@ def create_app(
     @app.websocket("/ws/risk")
     async def risk_stream(websocket: WebSocket) -> None:
         await websocket.accept()
+        receive_task = asyncio.create_task(_receive_camera_frames(websocket, app.state.provider))
         manager = StreamManager(
             websocket,
             context_mode=app.state.session.get_context_mode,
@@ -106,7 +108,12 @@ def create_app(
             interval_seconds=interval_seconds,
             event_callback=app.state.session.record_events,
         )
-        await manager.start_streaming()
+        try:
+            await manager.start_streaming()
+        finally:
+            receive_task.cancel()
+            with suppress(asyncio.CancelledError, WebSocketDisconnect):
+                await receive_task
 
     @app.post("/session/start")
     async def start_session() -> dict[str, bool | str]:
@@ -144,6 +151,21 @@ def _call_provider(provider: FrameDataProvider, name: str, *args: str) -> bool:
         return bool(method(*args))
     except Exception:
         return False
+
+
+async def _receive_camera_frames(websocket: WebSocket, provider: FrameDataProvider) -> None:
+    """Receive browser JPEG frames without blocking the outbound risk stream."""
+    submit_frame = getattr(provider, "submit_frame_bytes", None)
+    if not callable(submit_frame):
+        return
+    try:
+        while True:
+            message = await websocket.receive()
+            frame_bytes = message.get("bytes")
+            if frame_bytes:
+                await asyncio.to_thread(submit_frame, frame_bytes)
+    except WebSocketDisconnect:
+        return
 
 
 app = create_app()
