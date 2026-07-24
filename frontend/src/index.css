@@ -1,0 +1,131 @@
+/* ───────────────────────────────────────────────────────
+   Design System — Predictive Driver Risk Cockpit
+   ─────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Surface */
+  --bg-base: #060610;
+  --bg-surface: #0c0c1d;
+  --bg-card: rgba(12, 12, 30, 0.72);
+  --border-subtle: rgba(55, 55, 95, 0.28);
+  --border-accent: rgba(80, 80, 140, 0.4);
+
+  /* Text */
+  --text-primary: #e4e4ef;
+  --text-secondary: #8e8ea6;
+  --text-muted: #4e4e68;
+  --text-label: #6e6e88;
+
+  /* Semantic colours */
+  --safe: #00e676;
+  --safe-glow: rgba(0, 230, 118, 0.12);
+  --safe-glow-strong: rgba(0, 230, 118, 0.35);
+
+  --warn: #ffab00;
+  --warn-glow: rgba(255, 171, 0, 0.12);
+  --warn-glow-strong: rgba(255, 171, 0, 0.35);
+
+  --danger: #ff1744;
+  --danger-glow: rgba(255, 23, 68, 0.12);
+  --danger-glow-strong: rgba(255, 23, 68, 0.35);
+
+  --accent-cyan: #00e5ff;
+  --accent-glow: rgba(0, 229, 255, 0.1);
+  --naive-color: #ff6d00;
+
+  /* Typography */
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Radii */
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 4px;
+
+  /* Shadows */
+  --shadow-glow-safe: 0 0 20px var(--safe-glow), 0 0 40px var(--safe-glow);
+  --shadow-glow-warn: 0 0 20px var(--warn-glow), 0 0 40px var(--warn-glow);
+  --shadow-glow-danger: 0 0 20px var(--danger-glow), 0 0 40px var(--danger-glow);
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-body);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+body {
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(0, 229, 255, 0.025) 0%, transparent 55%),
+    linear-gradient(rgba(30, 30, 60, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 30, 60, 0.06) 1px, transparent 1px);
+  background-size: 100% 100%, 48px 48px, 48px 48px;
+}
+
+#root {
+  height: 100%;
+}
+
+/* ── Panel utility ──────────────────────────────────── */
+
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  position: relative;
+  transition: border-color 0.3s ease;
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 18%;
+  right: 18%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(120, 120, 200, 0.18), transparent);
+  pointer-events: none;
+}
+
+.panel-header {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-label);
+}
+
+/* ── Scrollbar ──────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 2px;
+}
+
+/* ── Global keyframes ───────────────────────────────── */
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.45; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

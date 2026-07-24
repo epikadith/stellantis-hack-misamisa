@@ -2,6 +2,7 @@ README.md
 pyproject.toml
 backend/__init__.py
 backend/app.py
+backend/cv_provider.py
 backend/simulation.py
 backend/streaming.py
 cv/__init__.py
@@ -20,6 +21,8 @@ predictive_driver_risk_cockpit.egg-info/SOURCES.txt
 predictive_driver_risk_cockpit.egg-info/dependency_links.txt
 predictive_driver_risk_cockpit.egg-info/requires.txt
 predictive_driver_risk_cockpit.egg-info/top_level.txt
+tests/test_backend_cv_integration.py
+tests/test_backend_events.py
 tests/test_backend_phase1.py
 tests/test_calibration.py
 tests/test_cv_contract.py

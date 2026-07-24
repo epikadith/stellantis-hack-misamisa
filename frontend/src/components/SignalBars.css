@@ -1,0 +1,82 @@
+.sig-panel {
+  padding: 16px;
+  flex: 1;
+}
+
+.sig-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 2px;
+}
+
+.sig-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  transition: background 0.25s;
+}
+
+.sig-row.dominant {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sig-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sig-names {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.sig-label {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+}
+
+.sig-desc {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.sig-value {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Bar ────────────────────────────────────────────── */
+
+.sig-track {
+  height: 5px;
+  background: rgba(40, 40, 70, 0.45);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.sig-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease-out;
+  min-width: 2px;
+}
+
+.sig-threshold {
+  position: absolute;
+  left: 70%;
+  top: -3px;
+  bottom: -3px;
+  width: 1px;
+  background: rgba(255, 23, 68, 0.25);
+}

@@ -1,0 +1,119 @@
+.ap-panel {
+  padding: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ── Severity states ────────────────────────────────── */
+
+.ap-panel.alert-amber {
+  border-color: rgba(255, 171, 0, 0.4);
+  box-shadow: var(--shadow-glow-warn);
+}
+
+.ap-panel.alert-red {
+  border-color: rgba(255, 23, 68, 0.4);
+  box-shadow: var(--shadow-glow-danger);
+  animation: alert-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes alert-pulse {
+  0%, 100% { box-shadow: var(--shadow-glow-danger); }
+  50% { box-shadow: 0 0 28px var(--danger-glow-strong), 0 0 56px var(--danger-glow); }
+}
+
+/* ── Active alert body ──────────────────────────────── */
+
+.ap-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.ap-badge-row { display: flex; }
+
+.ap-badge {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 3px 9px;
+  border-radius: var(--radius-xs);
+}
+
+.sev-amber {
+  color: var(--warn);
+  background: var(--warn-glow);
+  border: 1px solid rgba(255, 171, 0, 0.4);
+}
+
+.sev-red {
+  color: var(--danger);
+  background: var(--danger-glow);
+  border: 1px solid rgba(255, 23, 68, 0.4);
+}
+
+.sev-none {
+  color: var(--text-muted);
+}
+
+.ap-reason {
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+/* ── Time saved ─────────────────────────────────────── */
+
+.ap-saved {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: rgba(0, 229, 255, 0.05);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 229, 255, 0.12);
+}
+
+.saved-icon { font-size: 18px; }
+
+.saved-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.saved-val {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  line-height: 1.1;
+}
+
+.saved-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+/* ── Idle state ─────────────────────────────────────── */
+
+.ap-idle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px 0;
+}
+
+.ap-idle-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--safe);
+  box-shadow: 0 0 6px var(--safe-glow-strong);
+}
+
+.ap-idle-text {
+  font-size: 12px;
+  color: var(--text-muted);
+}
