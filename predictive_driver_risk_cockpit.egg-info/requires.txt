@@ -1,0 +1,8 @@
+
+[cv]
+numpy
+opencv-python
+mediapipe==0.10.21
+
+[dev]
+pytest<9.0,>=8.0

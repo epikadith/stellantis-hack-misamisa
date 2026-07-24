@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "predictive-driver-risk-cockpit"
+version = "0.1.0"
+description = "CV and signal-fusion module for the Predictive Driver Risk Cockpit"
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+cv = ["numpy", "opencv-python", "mediapipe==0.10.21"]
+dev = ["pytest>=8.0,<9.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+include = ["cv*"]
