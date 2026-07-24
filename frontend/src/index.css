@@ -1,0 +1,22 @@
+:root {
+  --bg: #0a0f12;
+  --surface: #11191d;
+  --border: #26343a;
+  --text: #e0e8ea;
+  --text-dim: #84969d;
+  --green: #00e676;
+  --amber: #ffb000;
+  --red: #ff4d5f;
+  --cyan: #00d7e8;
+  --sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--bg); }
+button, input, select { font: inherit; }
